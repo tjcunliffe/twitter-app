@@ -1,0 +1,7 @@
+package: main
+import:
+  - package: github.com/gorilla/pat
+  - package: github.com/Sirupsen/logrus
+  - package: github.com/codegangsta/negroni
+  - package: github.com/markbates/goth
+  - package: github.com/gorilla/securecookie
