@@ -67,7 +67,7 @@ func getRouter() *pat.Router {
 	p.Get("/auth/{provider}/callback", callBackHandler)
 	p.Get("/auth/{provider}", gothic.BeginAuthHandler)
 	p.Get("/login", loginHandler)
-	p.Get("/", homeHandler)
+	p.Get("/", WithAuth(homeHandler))
 	return p
 }
 
@@ -88,7 +88,13 @@ func callBackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    // fmt.Fprintf(w, user.Name)
+	// setting twauth cookie for later usage
+	http.SetCookie(w, &http.Cookie{
+		Name:  "twauth",
+		Value: user.AccessToken,
+		Path:  "/"})
+
+
 	t, _ := template.New("foo").Parse(userTemplate)
 	t.Execute(w, user)
 }
