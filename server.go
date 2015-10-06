@@ -7,6 +7,7 @@ import (
 	"flag"
 	"os"
 	"encoding/json"
+	"html/template"
 	log "github.com/Sirupsen/logrus"
 
 	"github.com/markbates/goth"
@@ -63,15 +64,20 @@ func main() {
 
 func getRouter() *pat.Router {
 	p := pat.New()
-
 	p.Get("/auth/{provider}/callback", callBackHandler)
 	p.Get("/auth/{provider}", gothic.BeginAuthHandler)
+	p.Get("/login", loginHandler)
 	p.Get("/", homeHandler)
 	return p
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request){
 	fmt.Fprintf(w, "Welcome to the home page!")
+}
+
+func loginHandler(w http.ResponseWriter, r *http.Request){
+	t, _ := template.New("foo").Parse(indexTemplate)
+	t.Execute(w, nil)
 }
 
 
@@ -81,5 +87,23 @@ func callBackHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, err)
 		return
 	}
-    fmt.Fprintf(w, user.Name)
+
+    // fmt.Fprintf(w, user.Name)
+	t, _ := template.New("foo").Parse(userTemplate)
+	t.Execute(w, user)
 }
+
+var indexTemplate = `
+<p><a href="/auth/twitter">Log in with Twitter</a></p>
+`
+
+var userTemplate = `
+<p>Name: {{.Name}}</p>
+<p>Email: {{.Email}}</p>
+<p>NickName: {{.NickName}}</p>
+<p>Location: {{.Location}}</p>
+<p>AvatarURL: {{.AvatarURL}} <img src="{{.AvatarURL}}"></p>
+<p>Description: {{.Description}}</p>
+<p>UserID: {{.UserID}}</p>
+<p>AccessToken: {{.AccessToken}}</p>
+`
