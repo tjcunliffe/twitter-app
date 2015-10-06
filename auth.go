@@ -18,6 +18,6 @@ func WithAuth(fn http.HandlerFunc) http.HandlerFunc {
 			// success, proceed to original Handler
 			fn(w, r)
 		}
-		fn(w, r)
+//		fn(w, r)
 	}
 }
