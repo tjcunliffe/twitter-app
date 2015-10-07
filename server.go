@@ -8,9 +8,6 @@ import (
 	"net/http"
 	log "github.com/Sirupsen/logrus"
 
-	"github.com/markbates/goth"
-	"github.com/markbates/goth/gothic"
-	"github.com/markbates/goth/providers/twitter"
 	"github.com/unrolled/render"
 	"github.com/meatballhat/negroni-logrus"
 	"github.com/go-zoo/bone"
@@ -66,10 +63,6 @@ func main() {
 		"Secret": AppConfig.TwitterSecret,
 	}).Info("app is starting")
 
-	// initialising goth provider
-	goth.UseProviders(
-		twitter.New(AppConfig.TwitterKey, AppConfig.TwitterSecret, "http://localhost:8080/auth/twitter/callback"))
-
 	// looking for option args when starting App
 	// like ./twitter-app -port=":8080" would start on port 8080
 	var port = flag.String("port", ":8080", "Server port")
@@ -90,12 +83,8 @@ func main() {
 
 func getBoneRouter(h HTTPClientHandler) *bone.Mux {
 	mux := bone.New()
-	mux.Get("/auth/:provider/callback", GetProvider(http.HandlerFunc(callBackHandler)))
-	mux.Get("/auth/:provider", GetProvider(http.HandlerFunc(gothic.BeginAuthHandler)))
-	mux.Get("/login", http.HandlerFunc(loginHandler))
-	// search twitter url handler
-	mux.Post("/search", http.HandlerFunc(h.searchTwitter))
-	mux.Get("/", http.HandlerFunc(WithAuth(h.homeHandler)))
+	mux.Get("/query", http.HandlerFunc(h.queryTwitter))
+	mux.Get("/", http.HandlerFunc(h.homeHandler))
 	// handling static files
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
