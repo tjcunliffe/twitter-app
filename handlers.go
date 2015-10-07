@@ -7,6 +7,7 @@ import (
 	"github.com/markbates/goth/gothic"
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/securecookie"
+	"github.com/unrolled/render"
 )
 
 var hashGenKeySecret = securecookie.GenerateRandomKey(16)
@@ -17,16 +18,20 @@ var hashKey = []byte(hashGenKeySecret)
 var blockKey = []byte(blockGenKey)
 var s = securecookie.New(hashKey, blockKey)
 
+type Handler struct {
+	r *render.Render
+}
 
-func homeHandler(w http.ResponseWriter, r *http.Request){
+func (h *Handler) homeHandler(w http.ResponseWriter, r *http.Request){
 
 	if cookie, err := r.Cookie("twauth"); err == nil {
-		log.Info("Cokkie found, decoding...")
+		log.Info("Cookie found, decoding...")
 		value := make(map[string]string)
 		err := s.Decode("twauth", cookie.Value, &value)
 		if err == nil {
-			fmt.Fprintf(w, "The value of twtoken is %q", value["twtoken"])
-			fmt.Fprintf(w, "The value of twtokensecret is %q", value["twtokensecret"])
+			newmap := map[string]interface{}{"metatitle": "Tweets", "token": value["twtoken"]}
+			h.r.HTML(w, http.StatusOK, "home", newmap)
+
 		} else {
 			log.Error("failed to decode cookie", err)
 			// not valid, probably wrong key
@@ -43,12 +48,16 @@ func homeHandler(w http.ResponseWriter, r *http.Request){
 	}
 }
 
+
+// loginHandler presents initial template for logging in
 func loginHandler(w http.ResponseWriter, r *http.Request){
 	t, _ := template.New("foo").Parse(indexTemplate)
 	t.Execute(w, nil)
 }
 
 
+// callBackHandler does final authentication step for user and records a cookie that will be stored in user's
+// browser for later decoding and reusing of auth tokens
 func callBackHandler(w http.ResponseWriter, r *http.Request) {
 	user, err := gothic.CompleteUserAuth(w, r)
 	if err != nil {
