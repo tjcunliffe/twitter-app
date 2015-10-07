@@ -16,12 +16,26 @@ import (
 	"github.com/go-zoo/bone"
 )
 
+// Initial structure of configuration that is expected from conf.json file
 type Configuration struct {
 	TwitterKey string
 	TwitterSecret string
 }
 
+// AppConfig stores application configuration
 var AppConfig Configuration
+
+// Client structure to be injected into functions to perform HTTP calls
+type Client struct {
+	HTTPClient *http.Client
+}
+
+// HTTPClientHandler used for passing http client connection and template
+// information back to handlers, mostly for testing purposes
+type HTTPClientHandler struct {
+	http Client
+	r  *render.Render
+}
 
 func main() {
 	// Output to stderr instead of stdout, could also be a file.
@@ -58,7 +72,9 @@ func main() {
 
 	// getting base template and handler struct
 	r := render.New(render.Options{Layout: "layout"})
-	h := Handler{r: r}
+	// h := Handler{r: r}
+
+	h := HTTPClientHandler{http: Client{&http.Client{}}, r: r}
 
 	mux := getBoneRouter(h)
 	n := negroni.Classic()
@@ -68,11 +84,13 @@ func main() {
 }
 
 
-func getBoneRouter(h Handler) *bone.Mux {
+func getBoneRouter(h HTTPClientHandler) *bone.Mux {
 	mux := bone.New()
 	mux.Get("/auth/:provider/callback", GetProvider(http.HandlerFunc(callBackHandler)))
 	mux.Get("/auth/:provider", GetProvider(http.HandlerFunc(gothic.BeginAuthHandler)))
 	mux.Get("/login", http.HandlerFunc(loginHandler))
+	// search twitter url handler
+	mux.Post("/search", http.HandlerFunc(h.searchTwitter))
 	mux.Get("/", http.HandlerFunc(WithAuth(h.homeHandler)))
 	// handling static files
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
