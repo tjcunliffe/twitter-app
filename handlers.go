@@ -3,12 +3,23 @@ package main
 import (
 	"net/http"
 	"fmt"
+	"io/ioutil"
 	"html/template"
 	"github.com/markbates/goth/gothic"
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/securecookie"
 	"github.com/unrolled/render"
+
+	"encoding/json"
 )
+
+// SearchQuery is a struct of json body that is expected to
+// come from the client app and holds both query and tokens
+type SearchQuery struct {
+	Query string `json:query`
+	Token string `json:token`
+	Secret string `json:secret`
+}
 
 var hashGenKeySecret = securecookie.GenerateRandomKey(16)
 var blockGenKey = securecookie.GenerateRandomKey(16)
@@ -22,7 +33,7 @@ type Handler struct {
 	r *render.Render
 }
 
-func (h *Handler) homeHandler(w http.ResponseWriter, r *http.Request){
+func (h *HTTPClientHandler) homeHandler(w http.ResponseWriter, r *http.Request){
 
 	if cookie, err := r.Cookie("twauth"); err == nil {
 		log.Info("Cookie found, decoding...")
@@ -103,3 +114,37 @@ var userTemplate = `
 <p>UserID: {{.UserID}}</p>
 <p>AccessToken: {{.AccessToken}}</p>
 `
+
+
+func (h *HTTPClientHandler) searchTwitter(w http.ResponseWriter, r *http.Request){
+
+	defer r.Body.Close()
+
+	// reading resposne body
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		// logging read error
+		log.WithFields(log.Fields{
+			"error": err.Error(),
+		}).Warn("Failed to read request body!")
+	}
+
+	var data SearchQuery
+	err = json.Unmarshal(body, &data)
+
+	if err != nil{
+		// logging read error
+		log.WithFields(log.Fields{
+			"error": err.Error(),
+		}).Warn("Failed to unmarshall json body!")
+	}
+
+	// parameters
+	token := data.Token
+	secret := data.Secret
+	query := data.Query
+
+	fmt.Println(token)
+	fmt.Println(secret)
+	fmt.Println(query)
+}
