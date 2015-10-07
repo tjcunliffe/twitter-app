@@ -5,12 +5,15 @@ import (
 	"flag"
 	"os"
 	"encoding/json"
+	"net/http"
 	log "github.com/Sirupsen/logrus"
 
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/twitter"
-	"github.com/gorilla/pat"
+	"github.com/unrolled/render"
+	"github.com/meatballhat/negroni-logrus"
+	"github.com/go-zoo/bone"
 )
 
 type Configuration struct {
@@ -53,17 +56,27 @@ func main() {
 	var port = flag.String("port", ":8080", "Server port")
 	flag.Parse() // parse the flag
 
-	mux := getRouter()
+	// getting base template and handler struct
+	r := render.New(render.Options{Layout: "layout"})
+	h := Handler{r: r}
+
+	mux := getBoneRouter(h)
 	n := negroni.Classic()
+	n.Use(negronilogrus.NewMiddleware())
 	n.UseHandler(mux)
 	n.Run(*port)
 }
 
-func getRouter() *pat.Router {
-	p := pat.New()
-	p.Get("/auth/{provider}/callback", callBackHandler)
-	p.Get("/auth/{provider}", gothic.BeginAuthHandler)
-	p.Get("/login", loginHandler)
-	p.Get("/", WithAuth(homeHandler))
-	return p
+
+func getBoneRouter(h Handler) *bone.Mux {
+	mux := bone.New()
+	mux.Get("/auth/:provider/callback", GetProvider(http.HandlerFunc(callBackHandler)))
+	mux.Get("/auth/:provider", GetProvider(http.HandlerFunc(gothic.BeginAuthHandler)))
+	mux.Get("/login", http.HandlerFunc(loginHandler))
+	mux.Get("/", http.HandlerFunc(WithAuth(h.homeHandler)))
+	// handling static files
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
+	return mux
 }
+
