@@ -86,7 +86,9 @@ const ButtonInputExample = React.createClass({
         this.setState(this.validationState());
     },
 
-    submitQuery() {
+    handleSubmit(e) {
+
+        e.preventDefault();
         let query = this.refs.input.getValue();
 
         // fetching data
@@ -98,18 +100,15 @@ const ButtonInputExample = React.createClass({
         React.unmountComponentAtNode(document.getElementById('results'));
         //// mounting results
         React.render(<TweetsResultsComponent url={href}/>, document.getElementById("results"))
-
-
     },
 
     render() {
         return (
-            <form>
+            <form onSubmit={this.handleSubmit}>
                 <Input type="text" ref="input" onChange={this.handleChange}/>
 
-                <ButtonInput value="Submit your query"
+                <ButtonInput type="submit" value="Submit"
                              bsStyle={this.state.style} bsSize="small"
-                             onClick={this.submitQuery}
                              disabled={this.state.disabled}/>
             </form>
         );

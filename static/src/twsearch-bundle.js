@@ -144,7 +144,9 @@
 	        this.setState(this.validationState());
 	    },
 
-	    submitQuery: function submitQuery() {
+	    handleSubmit: function handleSubmit(e) {
+
+	        e.preventDefault();
 	        var query = this.refs.input.getValue();
 
 	        // fetching data
@@ -161,11 +163,10 @@
 	    render: function render() {
 	        return _react2['default'].createElement(
 	            'form',
-	            null,
+	            { onSubmit: this.handleSubmit },
 	            _react2['default'].createElement(_reactBootstrap.Input, { type: 'text', ref: 'input', onChange: this.handleChange }),
-	            _react2['default'].createElement(_reactBootstrap.ButtonInput, { value: 'Submit your query',
+	            _react2['default'].createElement(_reactBootstrap.ButtonInput, { type: 'submit', value: 'Submit',
 	                bsStyle: this.state.style, bsSize: 'small',
-	                onClick: this.submitQuery,
 	                disabled: this.state.disabled })
 	        );
 	    }
