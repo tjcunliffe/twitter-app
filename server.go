@@ -37,6 +37,8 @@ type HTTPClientHandler struct {
 	r  *render.Render
 }
 
+var TwitterUri string
+
 func main() {
 	// Output to stderr instead of stdout, could also be a file.
 	log.SetOutput(os.Stderr)
@@ -55,6 +57,9 @@ func main() {
 		log.WithFields(log.Fields{"Error": err.Error()}).Panic("Failed to read configuration")
 	}
 
+	// assign TwitterUri from configuration (probably)
+	TwitterUri = "https://api.twitter.com"
+
 	// app starting
 	log.WithFields(log.Fields{
 		"Key": AppConfig.TwitterKey,
@@ -72,7 +77,6 @@ func main() {
 
 	// getting base template and handler struct
 	r := render.New(render.Options{Layout: "layout"})
-	// h := Handler{r: r}
 
 	h := HTTPClientHandler{http: Client{&http.Client{}}, r: r}
 
