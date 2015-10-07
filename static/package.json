@@ -1,0 +1,19 @@
+{
+  "name": "static",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Karolis Rusenas",
+  "license": "MIT",
+  "devDependencies": {
+    "react": "*",
+    "react-bootstrap": "*",
+    "babel-loader": "*",
+    "pretty-data": "*",
+    "react-highlight": "*"
+  }
+
+}
