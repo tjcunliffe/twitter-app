@@ -62,7 +62,7 @@ const TweetsResultsComponent = React.createClass({
 });
 
 
-const ButtonInputExample = React.createClass({
+const ButtonInputQueryComponent = React.createClass({
     getInitialState() {
         return {
             disabled: true,
@@ -90,11 +90,14 @@ const ButtonInputExample = React.createClass({
 
         e.preventDefault();
         let query = this.refs.input.getValue();
+        let backend = this.refs.backend.getValue();
+
 
         // fetching data
-        var href = "/query?q=" + query;
+        var href = "/query?q=" + query + "&backend=" + backend;
         //var href = "/rand?q=" + query;
         console.log("preparing query");
+        console.log(href);
 
         // unmounting current results
         React.unmountComponentAtNode(document.getElementById('results'));
@@ -104,15 +107,23 @@ const ButtonInputExample = React.createClass({
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
-                <Input type="text" ref="input" onChange={this.handleChange}/>
+            <div>
+                <form onSubmit={this.handleSubmit}>
 
-                <ButtonInput type="submit" value="Submit"
-                             bsStyle={this.state.style} bsSize="small"
-                             disabled={this.state.disabled}/>
-            </form>
+                    <Input type="select" label="External API URI" placeholder="select" ref="backend">
+                        <option value="https://api.twitter.com">Twitter</option>
+                        <option value="http://localhost:8300">Mirage</option>
+                    </Input>
+
+                    <Input type="text" ref="input" placeholder="Enter your query here.." onChange={this.handleChange}/>
+
+                    <ButtonInput type="submit" value="Submit"
+                                 bsStyle={this.state.style} bsSize="small"
+                                 disabled={this.state.disabled}/>
+                </form>
+            </div>
         );
     }
 });
 
-React.render(<ButtonInputExample />, document.getElementById("app"));
+React.render(<ButtonInputQueryComponent />, document.getElementById("app"));
