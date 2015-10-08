@@ -37,6 +37,8 @@ func (h *HTTPClientHandler) queryTwitter(w http.ResponseWriter, r *http.Request)
 	queryString := urlQuery["q"]
 	// getting actual twitter (or Mirage) backend URI
 	backendUri := urlQuery["backend"]
+	// getting scenario and session
+	scenarioSession := urlQuery["ss"]
 
 	client := h.http.HTTPClient
 	b := h.getBearerToken()
@@ -58,6 +60,8 @@ func (h *HTTPClientHandler) queryTwitter(w http.ResponseWriter, r *http.Request)
 	//include an Authorization header formatted as
 	//Bearer <bearer token value from step 2>
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", b.AccessToken))
+	// Adding scenario and session to identify which scenario and session should we use
+	req.Header.Add("MirageScenarioSession", scenarioSession[0])
 
 	//Issue the request and get the JSON API response
 	resp, err := client.Do(req)
