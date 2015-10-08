@@ -77,11 +77,7 @@ const ButtonInputQueryComponent = React.createClass({
         let backend = this.refs.backend.getValue();
         let style = 'danger';
 
-        if(backend == "https://api.twitter.com"){
-            this.state.ss = true
-        } else {
-            this.state.ss = false
-        }
+        this.state.ss = backend == "https://api.twitter.com";
 
         if(backend != "http://localhost:8300"){
             if (length > 0) style = 'success';
@@ -105,10 +101,11 @@ const ButtonInputQueryComponent = React.createClass({
         e.preventDefault();
         let query = this.refs.input.getValue();
         let backend = this.refs.backend.getValue();
+        let scenarioSession = this.refs.scenarioSession.getValue();
 
 
-        // fetching data
-        var href = "/query?q=" + query + "&backend=" + backend;
+        // creating final href
+        var href = "/query?q=" + query + "&backend=" + backend + "&ss=" + scenarioSession;
         //var href = "/rand?q=" + query;
         console.log("preparing query");
         console.log(href);
