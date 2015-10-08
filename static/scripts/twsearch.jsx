@@ -66,15 +66,29 @@ const ButtonInputQueryComponent = React.createClass({
     getInitialState() {
         return {
             disabled: true,
-            style: null
+            style: null,
+            ss: true
         };
     },
 
     validationState() {
         let length = this.refs.input.getValue().length;
+        let scenarioSession = this.refs.scenarioSession.getValue().length;
+        let backend = this.refs.backend.getValue();
         let style = 'danger';
 
-        if (length > 0) style = 'success';
+        if(backend == "https://api.twitter.com"){
+            this.state.ss = true
+        } else {
+            this.state.ss = false
+        }
+
+        if(backend != "http://localhost:8300"){
+            if (length > 0) style = 'success';
+        } else {
+            if (length >0 && scenarioSession > 0) style = 'success';
+        }
+
         //else if (length > 5) style = 'warning';
 
         let disabled = style !== 'success';
@@ -110,10 +124,14 @@ const ButtonInputQueryComponent = React.createClass({
             <div>
                 <form onSubmit={this.handleSubmit}>
 
-                    <Input type="select" label="External API URI" placeholder="select" ref="backend">
+                    <Input type="select" label="External API URI" placeholder="select" ref="backend" onChange={this.handleChange}>
                         <option value="https://api.twitter.com">Twitter</option>
-                        <option value="http://localhost:8300">Mirage</option>
+                        <option value="http://localhost:8300">Mirage Proxy</option>
                     </Input>
+
+                    <Input type="text" ref="scenarioSession" placeholder="Provide 'scenario:session' here"
+                           disabled={this.state.ss}
+                           onChange={this.handleChange}/>
 
                     <Input type="text" ref="input" placeholder="Enter your query here.." onChange={this.handleChange}/>
 

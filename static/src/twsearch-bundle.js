@@ -124,15 +124,29 @@
 	    getInitialState: function getInitialState() {
 	        return {
 	            disabled: true,
-	            style: null
+	            style: null,
+	            ss: true
 	        };
 	    },
 
 	    validationState: function validationState() {
 	        var length = this.refs.input.getValue().length;
+	        var scenarioSession = this.refs.scenarioSession.getValue().length;
+	        var backend = this.refs.backend.getValue();
 	        var style = 'danger';
 
-	        if (length > 0) style = 'success';
+	        if (backend == "https://api.twitter.com") {
+	            this.state.ss = true;
+	        } else {
+	            this.state.ss = false;
+	        }
+
+	        if (backend != "http://localhost:8300") {
+	            if (length > 0) style = 'success';
+	        } else {
+	            if (length > 0 && scenarioSession > 0) style = 'success';
+	        }
+
 	        //else if (length > 5) style = 'warning';
 
 	        var disabled = style !== 'success';
@@ -171,7 +185,7 @@
 	                { onSubmit: this.handleSubmit },
 	                _react2['default'].createElement(
 	                    _reactBootstrap.Input,
-	                    { type: 'select', label: 'External API URI', placeholder: 'select', ref: 'backend' },
+	                    { type: 'select', label: 'External API URI', placeholder: 'select', ref: 'backend', onChange: this.handleChange },
 	                    _react2['default'].createElement(
 	                        'option',
 	                        { value: 'https://api.twitter.com' },
@@ -180,9 +194,12 @@
 	                    _react2['default'].createElement(
 	                        'option',
 	                        { value: 'http://localhost:8300' },
-	                        'Mirage'
+	                        'Mirage Proxy'
 	                    )
 	                ),
+	                _react2['default'].createElement(_reactBootstrap.Input, { type: 'text', ref: 'scenarioSession', placeholder: 'Provide \'scenario:session\' here',
+	                    disabled: this.state.ss,
+	                    onChange: this.handleChange }),
 	                _react2['default'].createElement(_reactBootstrap.Input, { type: 'text', ref: 'input', placeholder: 'Enter your query here..', onChange: this.handleChange }),
 	                _react2['default'].createElement(_reactBootstrap.ButtonInput, { type: 'submit', value: 'Submit',
 	                    bsStyle: this.state.style, bsSize: 'small',
