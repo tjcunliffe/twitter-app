@@ -118,8 +118,8 @@
 	    }
 	});
 
-	var ButtonInputExample = _react2['default'].createClass({
-	    displayName: 'ButtonInputExample',
+	var ButtonInputQueryComponent = _react2['default'].createClass({
+	    displayName: 'ButtonInputQueryComponent',
 
 	    getInitialState: function getInitialState() {
 	        return {
@@ -148,11 +148,13 @@
 
 	        e.preventDefault();
 	        var query = this.refs.input.getValue();
+	        var backend = this.refs.backend.getValue();
 
 	        // fetching data
-	        var href = "/query?q=" + query;
+	        var href = "/query?q=" + query + "&backend=" + backend;
 	        //var href = "/rand?q=" + query;
 	        console.log("preparing query");
+	        console.log(href);
 
 	        // unmounting current results
 	        _react2['default'].unmountComponentAtNode(document.getElementById('results'));
@@ -162,17 +164,35 @@
 
 	    render: function render() {
 	        return _react2['default'].createElement(
-	            'form',
-	            { onSubmit: this.handleSubmit },
-	            _react2['default'].createElement(_reactBootstrap.Input, { type: 'text', ref: 'input', onChange: this.handleChange }),
-	            _react2['default'].createElement(_reactBootstrap.ButtonInput, { type: 'submit', value: 'Submit',
-	                bsStyle: this.state.style, bsSize: 'small',
-	                disabled: this.state.disabled })
+	            'div',
+	            null,
+	            _react2['default'].createElement(
+	                'form',
+	                { onSubmit: this.handleSubmit },
+	                _react2['default'].createElement(
+	                    _reactBootstrap.Input,
+	                    { type: 'select', label: 'External API URI', placeholder: 'select', ref: 'backend' },
+	                    _react2['default'].createElement(
+	                        'option',
+	                        { value: 'https://api.twitter.com' },
+	                        'Twitter'
+	                    ),
+	                    _react2['default'].createElement(
+	                        'option',
+	                        { value: 'http://localhost:8300' },
+	                        'Mirage'
+	                    )
+	                ),
+	                _react2['default'].createElement(_reactBootstrap.Input, { type: 'text', ref: 'input', placeholder: 'Enter your query here..', onChange: this.handleChange }),
+	                _react2['default'].createElement(_reactBootstrap.ButtonInput, { type: 'submit', value: 'Submit',
+	                    bsStyle: this.state.style, bsSize: 'small',
+	                    disabled: this.state.disabled })
+	            )
 	        );
 	    }
 	});
 
-	_react2['default'].render(_react2['default'].createElement(ButtonInputExample, null), document.getElementById("app"));
+	_react2['default'].render(_react2['default'].createElement(ButtonInputQueryComponent, null), document.getElementById("app"));
 
 /***/ },
 /* 1 */
