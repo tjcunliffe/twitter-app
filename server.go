@@ -34,7 +34,6 @@ type HTTPClientHandler struct {
 	r  *render.Render
 }
 
-var TwitterUri string
 
 func main() {
 	// Output to stderr instead of stdout, could also be a file.
@@ -53,9 +52,6 @@ func main() {
 	if err != nil {
 		log.WithFields(log.Fields{"Error": err.Error()}).Panic("Failed to read configuration")
 	}
-
-	// assign TwitterUri from configuration (probably)
-	TwitterUri = "https://api.twitter.com"
 
 	// app starting
 	log.WithFields(log.Fields{
