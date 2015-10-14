@@ -60,6 +60,10 @@ func (h *HTTPClientHandler) queryTwitter(w http.ResponseWriter, r *http.Request)
 	//include an Authorization header formatted as
 	//Bearer <bearer token value from step 2>
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", b.AccessToken))
+	log.WithFields(log.Fields{
+		"Token": b.AccessToken,
+	}).Info("Bearer token...")
+
 	// Adding scenario and session to identify which scenario and session should we use
 	req.Header.Add("MirageScenarioSession", scenarioSession[0])
 
