@@ -80,8 +80,6 @@
 	            dataType: "json",
 	            url: this.state.url,
 	            success: function success(data) {
-	                console.log(data);
-
 	                if (that.isMounted()) {
 	                    that.setState({
 	                        data: data,
@@ -119,7 +117,7 @@
 	});
 
 	var ButtonInputQueryComponent = _react2['default'].createClass({
-	    displayName: 'ButtonInputQueryComponent',
+	    displayName: "ButtonInputQueryComponent",
 
 	    getInitialState: function getInitialState() {
 	        return {
@@ -138,9 +136,13 @@
 	        this.state.ss = backend == "https://api.twitter.com";
 
 	        if (backend != "http://localhost:8300") {
-	            if (length > 0) style = 'success';
+	            if (length > 0) {
+	                style = 'success';
+	            }
 	        } else {
-	            if (length > 0 && scenarioSession > 0) style = 'success';
+	            if (length > 0 && scenarioSession > 0) {
+	                style = 'success';
+	            }
 	        }
 
 	        //else if (length > 5) style = 'warning';
@@ -163,9 +165,6 @@
 
 	        // creating final href
 	        var href = "/query?q=" + query + "&backend=" + backend + "&ss=" + scenarioSession;
-	        //var href = "/rand?q=" + query;
-	        console.log("preparing query");
-	        console.log(href);
 
 	        // unmounting current results
 	        _react2['default'].unmountComponentAtNode(document.getElementById('results'));
@@ -174,6 +173,12 @@
 	    },
 
 	    render: function render() {
+
+	        var APIDropdownTooltip = _react2['default'].createElement(
+	            _reactBootstrap.Tooltip,
+	            null,
+	            'Select external API URI to use. Choosing "Twitter" will call Twitter directly. Choose "Mirage Proxy" for recording and playback functionality'
+	        );
 	        return _react2['default'].createElement(
 	            'div',
 	            null,
@@ -181,23 +186,29 @@
 	                'form',
 	                { onSubmit: this.handleSubmit },
 	                _react2['default'].createElement(
-	                    _reactBootstrap.Input,
-	                    { type: 'select', label: 'External API URI', placeholder: 'select', ref: 'backend', onChange: this.handleChange },
+	                    _reactBootstrap.OverlayTrigger,
+	                    { placement: 'right', overlay: APIDropdownTooltip },
 	                    _react2['default'].createElement(
-	                        'option',
-	                        { value: 'https://api.twitter.com' },
-	                        'Twitter'
-	                    ),
-	                    _react2['default'].createElement(
-	                        'option',
-	                        { value: 'http://localhost:8300' },
-	                        'Mirage Proxy'
+	                        _reactBootstrap.Input,
+	                        { type: 'select', label: 'External API URI', placeholder: 'select', ref: 'backend',
+	                            onChange: this.handleChange },
+	                        _react2['default'].createElement(
+	                            'option',
+	                            { value: 'https://api.twitter.com' },
+	                            'Twitter'
+	                        ),
+	                        _react2['default'].createElement(
+	                            'option',
+	                            { value: 'http://localhost:8300' },
+	                            'Mirage Proxy'
+	                        )
 	                    )
 	                ),
 	                _react2['default'].createElement(_reactBootstrap.Input, { type: 'text', ref: 'scenarioSession', placeholder: 'Provide \'scenario:session\' here',
 	                    disabled: this.state.ss,
 	                    onChange: this.handleChange }),
-	                _react2['default'].createElement(_reactBootstrap.Input, { type: 'text', ref: 'input', placeholder: 'Enter your query here..', onChange: this.handleChange }),
+	                _react2['default'].createElement(_reactBootstrap.Input, { type: 'text', ref: 'input', placeholder: 'Enter your query here..',
+	                    onChange: this.handleChange }),
 	                _react2['default'].createElement(_reactBootstrap.ButtonInput, { type: 'submit', value: 'Submit',
 	                    bsStyle: this.state.style, bsSize: 'small',
 	                    disabled: this.state.disabled })
