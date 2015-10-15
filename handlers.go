@@ -38,7 +38,7 @@ func (h *HTTPClientHandler) queryTwitter(w http.ResponseWriter, r *http.Request)
 	// getting actual twitter (or Mirage) backend URI
 	backendUri := urlQuery["backend"][0]
 	if(backendUri == "mirage"){
-		backendUri = *proxyAddress
+		backendUri = AppConfig.MirageProxy
 	}
 	// getting scenario and session
 	scenarioSession := urlQuery["ss"]

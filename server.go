@@ -17,6 +17,7 @@ import (
 type Configuration struct {
 	TwitterKey string
 	TwitterSecret string
+	MirageProxy string
 }
 
 // AppConfig stores application configuration
@@ -35,8 +36,6 @@ type HTTPClientHandler struct {
 }
 
 var (
-	// ./twitter-app -proxy-address="http://somehost:8300"
-	proxyAddress   = flag.String("proxy-address", "http://localhost:8300", "Address to the Mirage proxy server")
 	// like ./twitter-app -port=":8080" would start on port 8080
 	port = flag.String("port", ":8080", "Server port")
 )
@@ -47,17 +46,37 @@ func main() {
 	log.SetOutput(os.Stderr)
 	log.SetFormatter(&log.TextFormatter{})
 
+	// getting app config
+	twitterKey := os.Getenv("TwitterKey")
+	twitterSecret := os.Getenv("TwitterSecret")
 
-	// getting configuration
-	file, err := os.Open("conf.json")
-	if err != nil {
-		log.Panic("Failed to open configuration file, quiting server.")
+
+	if(twitterKey != "" && twitterSecret != ""){
+		log.Info("Environment variables for Twitter authentication found.")
+		AppConfig.TwitterKey = twitterKey
+		AppConfig.TwitterSecret = twitterSecret
+	} else {
+		log.Info("Environment variables for Twitter authentication not found, looking for configuration file")
+		// getting configuration from file
+		file, err := os.Open("conf.json")
+		if err != nil {
+			log.Panic("Failed to open configuration file, quiting server.")
+		}
+		decoder := json.NewDecoder(file)
+		AppConfig = Configuration{}
+		err = decoder.Decode(&AppConfig)
+		if err != nil {
+			log.WithFields(log.Fields{"Error": err.Error()}).Panic("Failed to read configuration")
+		}
 	}
-	decoder := json.NewDecoder(file)
-	AppConfig = Configuration{}
-	err = decoder.Decode(&AppConfig)
-	if err != nil {
-		log.WithFields(log.Fields{"Error": err.Error()}).Panic("Failed to read configuration")
+
+	mirageProxy := os.Getenv("MirageProxyAddress")
+	if(mirageProxy == ""){
+		log.Info("MirageProxyAddress environment variable not found, using default - http://localhost:8300")
+		AppConfig.MirageProxy = "http://localhost:8300"
+	} else {
+		log.Info("MirageProxyAddress environment variable found!")
+		AppConfig.MirageProxy = mirageProxy
 	}
 
 	// app starting
