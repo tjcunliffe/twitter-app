@@ -13,3 +13,10 @@ It can either call Twitter API directly and by calling [Mirage Twitter Proxy](ht
 * Rename _conf.json.example_ to _conf.json_ and provide your previously acquired key and secret.
 * Run application (./twitter-app
 
+## Configuration
+
+To override default proxy location (localhost:8300) you can supply additional flag during startup:
+./twitter-app -proxy-address="http://somehost:8300"
+
+To override default port (8080):
+./twitter-app -port=":8888"
