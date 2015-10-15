@@ -24,12 +24,23 @@ const TweetsResultsComponent = React.createClass({
             dataType: "json",
             url: this.state.url,
             success: function (data) {
+
                 if (that.isMounted()) {
                     that.setState({
                         data: data,
                         loading: false
                     });
                 }
+            }
+        }).fail(function ($xhr) {
+            var response = {
+                data: $xhr.responseText
+            };
+            if (that.isMounted()) {
+                that.setState({
+                    data: response,
+                    loading: false
+                });
             }
         });
     },
