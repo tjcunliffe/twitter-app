@@ -34,6 +34,13 @@ type HTTPClientHandler struct {
 	r  *render.Render
 }
 
+var (
+	// ./twitter-app -proxy-address="http://somehost:8300"
+	proxyAddress   = flag.String("proxy-address", "http://localhost:8300", "Address to the Mirage proxy server")
+	// like ./twitter-app -port=":8080" would start on port 8080
+	port = flag.String("port", ":8080", "Server port")
+)
+
 
 func main() {
 	// Output to stderr instead of stdout, could also be a file.
@@ -60,8 +67,6 @@ func main() {
 	}).Info("app is starting")
 
 	// looking for option args when starting App
-	// like ./twitter-app -port=":8080" would start on port 8080
-	var port = flag.String("port", ":8080", "Server port")
 	flag.Parse() // parse the flag
 
 	// getting base template and handler struct
