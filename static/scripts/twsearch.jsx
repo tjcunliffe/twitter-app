@@ -131,7 +131,7 @@ const ButtonInputQueryComponent = React.createClass({
                         <Input type="select" label="External API URI" placeholder="select" ref="backend"
                                onChange={this.handleChange}>
                             <option value="https://api.twitter.com">Twitter</option>
-                            <option value="http://localhost:8300">Mirage Proxy</option>
+                            <option value="mirage">Mirage Proxy</option>
                         </Input>
                     </OverlayTrigger>
 

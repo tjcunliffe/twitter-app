@@ -199,7 +199,7 @@
 	                        ),
 	                        _react2['default'].createElement(
 	                            'option',
-	                            { value: 'http://localhost:8300' },
+	                            { value: 'mirage' },
 	                            'Mirage Proxy'
 	                        )
 	                    )
