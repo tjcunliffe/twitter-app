@@ -36,14 +36,17 @@ func (h *HTTPClientHandler) queryTwitter(w http.ResponseWriter, r *http.Request)
 	// getting submitted query string
 	queryString := urlQuery["q"]
 	// getting actual twitter (or Mirage) backend URI
-	backendUri := urlQuery["backend"]
+	backendUri := urlQuery["backend"][0]
+	if(backendUri == "mirage"){
+		backendUri = *proxyAddress
+	}
 	// getting scenario and session
 	scenarioSession := urlQuery["ss"]
 
 	client := h.http.HTTPClient
 	b := h.getBearerToken()
 
-	twitterEndPoint := backendUri[0] + "/1.1/search/tweets.json?q=" + queryString[0]
+	twitterEndPoint := backendUri + "/1.1/search/tweets.json?q=" + queryString[0]
 	// logging full URL and path
 	log.WithFields(log.Fields{
 		"chosenBackend": backendUri[0],
