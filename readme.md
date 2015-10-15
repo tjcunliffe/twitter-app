@@ -10,13 +10,20 @@ It can either call Twitter API directly and by calling [Mirage Twitter Proxy](ht
 * glide.yaml file holds all required dependencies. You can use glide to initialize your environment (glide install)  
 * build a binary file (go build).
 * Register your application in Twitter to get key and secret.
-* Rename _conf.json.example_ to _conf.json_ and provide your previously acquired key and secret.
+
+* Preferred way of storing Twitter auth details is environment variables:
+  export TwitterKey=your_key
+  export TwitterSecret=your_secret
+  
+  You can also create a configuration file for this:
+  Rename _conf.json.example_ to _conf.json_ and provide your previously acquired key and secret.
+
 * Run application (./twitter-app
 
 ## Configuration
 
-To override default proxy location (localhost:8300) you can supply additional flag during startup:
-./twitter-app -proxy-address="http://somehost:8300"
+To override default proxy location (localhost:8300) you can export environment variable "MirageProxyAddress":
+export MirageProxyAddress=http://proxyhost:8300
 
-To override default port (8080):
+To override default port (8080) supply flag during startup:
 ./twitter-app -port=":8888"
